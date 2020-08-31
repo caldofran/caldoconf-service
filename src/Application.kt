@@ -1,14 +1,19 @@
 package com.caldoconf.service
 
+import com.fasterxml.jackson.databind.SerializationFeature
 import io.ktor.application.*
-import io.ktor.response.*
-import io.ktor.request.*
-import io.ktor.features.*
-import io.ktor.routing.*
-import io.ktor.http.*
 import io.ktor.auth.*
-import com.fasterxml.jackson.databind.*
+import io.ktor.features.*
+import io.ktor.http.*
 import io.ktor.jackson.*
+import io.ktor.request.*
+import io.ktor.response.*
+import io.ktor.routing.*
+import java.util.*
+
+data class Conf(val title: String)
+
+var confs = listOf(Conf("1st Caldo"), Conf("2nd Caldo"))
 
 fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
 
@@ -37,12 +42,19 @@ fun Application.module(testing: Boolean = false) {
 
     routing {
         get("/") {
-            call.respondText("HELLO WORLD!", contentType = ContentType.Text.Plain)
+            call.respondText("Welcome to CaldoConf!")
         }
 
-        get("/json/jackson") {
-            call.respond(mapOf("hello" to "world"))
+        route("/confs") {
+            get {
+                call.respond(mapOf("confs" to confs))
+            }
+
+            post {
+                val proposedConf = call.receive<Conf>()
+                confs += proposedConf
+                call.respond(mapOf("confs" to confs))
+            }
         }
     }
 }
-
