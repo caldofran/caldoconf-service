@@ -1,0 +1,9 @@
+GET http://localhost:8080/conferences
+Accept: application/json
+
+###
+
+GET http://localhost:8080/conferences/99
+Accept: application/json
+
+###
